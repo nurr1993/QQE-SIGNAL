@@ -1,36 +1,45 @@
-name: Build APK with Buildozer
+name: Build APK
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 jobs:
   build:
-    runs-on: ubuntu-22.04  # atau ubuntu-latest, tapi 20.04 lebih aman untuk buildozer
-    env:
-      DOCKER_BUILDKIT: 0
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Set up Docker
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y docker.io
+          sudo apt-get remove -y containerd || true
+          sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk
 
-      - name: Build APK using Buildozer in Docker
+      - name: Install Docker (fix containerd conflict)
         run: |
-          docker run --rm \
-            -v "${{ github.workspace }}:/home/user/hostcwd" \
-            -w /home/user/hostcwd \
-            kivy/buildozer:python3 \
-            buildozer android debug
+          sudo apt-get remove -y docker docker-engine docker.io containerd runc || true
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sh get-docker.sh
 
-      - name: Upload APK artifact
+      - name: Pull Buildozer Docker image
+        run: |
+          docker pull kivy/buildozer
+
+      - name: Build APK
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/home/user/hostcwd \
+            -w /home/user/hostcwd \
+            kivy/buildozer buildozer android debug
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: my-qqe-apk
+          name: MyApp-APK
           path: bin/*.apk
