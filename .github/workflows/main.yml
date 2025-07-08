@@ -1,9 +1,7 @@
-name: Build APK with Buildozer Docker
+name: Build Kivy APK
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ main ]
 
 jobs:
   build:
@@ -11,15 +9,23 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Build APK using Buildozer Docker
+      - name: Set up Docker Build (non-BuildKit)
         env:
           DOCKER_BUILDKIT: 0
+        run: echo "BuildKit disabled"
+
+      - name: Build APK using Buildozer Docker
         run: |
-          docker run --rm -v $PWD:/home/user/hostcwd -w /home/user/hostcwd kivy/buildozer buildozer android debug
+          docker run --rm \
+            -v $PWD:/home/user/app \
+            -w /home/user/app \
+            kivy/buildozer \
+            buildozer android debug
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: my-kivy-app
+          name: Kivy-APK
           path: bin/*.apk
