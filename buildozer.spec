@@ -12,6 +12,8 @@ android.sdk = 24
 android.ndk = 25b
 android.arch = armeabi-v7a
 source.dir=.
+android.api = 33
+android.build_tools_version = 33.0.2
 
 [buildozer]
 log_level = 2
