@@ -16,23 +16,24 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install build dependencies
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk
+          sudo apt-get install -y zip unzip openjdk-17-jdk
 
       - name: Pull Buildozer Docker image
-        run: |
-          docker pull kivy/buildozer:latest
+        run: docker pull kivy/buildozer:latest
 
-      - name: Build APK using Buildozer Docker
+      - name: Run Buildozer in Docker
         run: |
-          docker run --rm -v ${{ github.workspace }}:/home/user/hostcwd \
+          docker run --rm \
+            -v ${{ github.workspace }}:/home/user/hostcwd \
             -w /home/user/hostcwd \
-            kivy/buildozer buildozer android debug
+            kivy/buildozer \
+            buildozer android debug
 
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: MyApp-APK
+          name: app-release.apk
           path: bin/*.apk
