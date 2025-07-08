@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04  # atau ubuntu-latest, tapi 20.04 lebih aman untuk buildozer
+    runs-on: ubuntu-22.04  # atau ubuntu-latest, tapi 20.04 lebih aman untuk buildozer
     env:
       DOCKER_BUILDKIT: 0
 
