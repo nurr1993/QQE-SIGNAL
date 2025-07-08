@@ -8,18 +8,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Set up Docker Build (non-BuildKit)
-        env:
-          DOCKER_BUILDKIT: 0
-        run: echo "BuildKit disabled"
+      - name: Disable BuildKit
+        run: echo "DOCKER_BUILDKIT=0" >> $GITHUB_ENV
 
-      - name: Build APK using Buildozer Docker
+      - name: Build APK via Docker (Buildozer)
         run: |
           docker run --rm \
-            -v $PWD:/home/user/app \
+            -v ${{ github.workspace }}:/home/user/app \
             -w /home/user/app \
             kivy/buildozer \
             buildozer android debug
@@ -27,5 +25,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Kivy-APK
+          name: QQE-APK
           path: bin/*.apk
