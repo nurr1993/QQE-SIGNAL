@@ -11,6 +11,7 @@ android.minapi = 21
 android.sdk = 24
 android.ndk = 25b
 android.arch = armeabi-v7a
+source.dir=.
 
 [buildozer]
 log_level = 2
