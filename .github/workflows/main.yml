@@ -23,6 +23,10 @@ jobs:
             libsqlite3-dev zlib1g-dev \
             libncurses5-dev libbz2-dev libreadline-dev
 
+      - name: Install Android Build Tools
+        run: |
+          yes | sdkmanager "build-tools;33.0.2" "platforms;android-33" "platform-tools"
+
       - name: 🐍 Setup Python & Buildozer
         run: |
           python3 -m pip install --upgrade pip
