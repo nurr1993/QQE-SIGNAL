@@ -11,20 +11,10 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y zip unzip openjdk-17-jdk
-
       - name: Pull Buildozer Docker image
         run: docker pull kivy/buildozer:latest
 
-      - name: Run Buildozer in Docker
+      - name: Build APK with Buildozer Docker
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/home/user/hostcwd \
