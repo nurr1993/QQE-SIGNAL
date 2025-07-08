@@ -28,7 +28,7 @@ jobs:
         buildozer init
         buildozer -v android debug
     - name: Upload APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: kivy-apk
         path: your_app_folder/bin/*.apk
