@@ -14,9 +14,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build APK using Buildozer Docker
+        env:
+          DOCKER_BUILDKIT: 0
         run: |
           docker run --rm -v $PWD:/home/user/hostcwd -w /home/user/hostcwd kivy/buildozer buildozer android debug
-
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
