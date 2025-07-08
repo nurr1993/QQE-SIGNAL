@@ -1,44 +1,42 @@
-name: Build APK with Buildozer
+name: Build APK
 
 on:
   push:
-    branches:
-      - main  # atau 'master' tergantung branch default kamu
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
-      - name: 🔄 Checkout Repository
-        uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: ⚙️ Install Dependencies
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y \
-            zip unzip git python3-pip \
-            openjdk-11-jdk \
-            libffi-dev libssl-dev \
-            libsqlite3-dev zlib1g-dev \
-            libncurses5-dev libbz2-dev libreadline-dev
-
-      - name: Install Android Build Tools
-        run: |
-          yes | sdkmanager "build-tools;33.0.2" "platforms;android-33" "platform-tools"
-
-      - name: 🐍 Setup Python & Buildozer
-        run: |
-          python3 -m pip install --upgrade pip
-          pip install cython virtualenv
+          sudo apt install -y zip unzip openjdk-17-jdk python3-pip
+          pip install --upgrade pip
+          pip install cython
           pip install buildozer
 
-      - name: 📦 Build APK
+      - name: Install Android SDK
         run: |
-          buildozer android debug
+          mkdir -p ~/.android
+          yes | sdkmanager --licenses || true
+          yes | sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 
-      - name: 📤 Upload APK
+      - name: Build APK
+        run: python3 -m buildozer android debug
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug.apk
+          name: my-kivy-app
           path: bin/*.apk
