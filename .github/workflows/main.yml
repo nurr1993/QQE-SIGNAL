@@ -1,29 +1,36 @@
-name: Build Kivy APK
+name: Build APK with Buildozer
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04  # atau ubuntu-latest, tapi 20.04 lebih aman untuk buildozer
+    env:
+      DOCKER_BUILDKIT: 0
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - name: Checkout source
+        uses: actions/checkout@v4
 
-      - name: Disable BuildKit
-        run: echo "DOCKER_BUILDKIT=0" >> $GITHUB_ENV
+      - name: Set up Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
 
-      - name: Build APK via Docker (Buildozer)
+      - name: Build APK using Buildozer in Docker
         run: |
           docker run --rm \
-            -v ${{ github.workspace }}:/home/user/app \
-            -w /home/user/app \
-            kivy/buildozer \
+            -v "${{ github.workspace }}:/home/user/hostcwd" \
+            -w /home/user/hostcwd \
+            kivy/buildozer:python3 \
             buildozer android debug
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: QQE-APK
+          name: my-qqe-apk
           path: bin/*.apk
